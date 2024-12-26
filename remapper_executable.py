@@ -6,7 +6,7 @@ import time
 CUSTOM_KEYCODE = 117  # Custom keycode for the Acer nitro sense button.
 
 # Define the keyboard shortcut to simulate (e.g., Ctrl+Alt+T for opening the terminal)
-KEYBOARD_SHORTCUT = {'initial': ['win', 'ctrl', 'right'], 'next': ['win', 'ctrl', 'left']}
+KEYBOARD_SHORTCUT = {1: ['win', 'ctrl', 'right'], 2: ['win', 'ctrl', 'left']}
 
 # Function to simulate a keyboard shortcut
 def simulate_shortcut(shortcut):
