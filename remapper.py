@@ -1,7 +1,26 @@
 # Working prototype that switches between two desktops in windows
 import keyboard
 import time
+import sys
+import win32event
+import win32api
+import win32con
+import win32process
 
+mutex_name = "remapper"  # Use a unique name for your mutex
+
+# Try to create a mutex
+mutex = win32event.CreateMutex(None, 1, mutex_name)
+
+# Check if the mutex is already taken
+if win32api.GetLastError() == win32con.ERROR_ALREADY_EXISTS:
+    print("Another instance of the application is already running.")
+    sys.exit(0)  # Exit if mutex exists, i.e., app already running
+
+print("Application is running...")
+
+
+############################################################################## APP LOGIC HERE
 
 # Define the custom keycode for the NitroSense button (replace with your keycode if you want to change any other key)
 CUSTOM_KEYCODE = 117  # Custom keycode for the Acer nitro sense button.
@@ -44,3 +63,10 @@ while True:
     # if event.name == 'esc':
         # print("Exiting the script.")
         # break
+
+# Keep the application running so that the mutex doesn't get released
+try:
+    while True:
+        pass
+except KeyboardInterrupt:
+    pass
