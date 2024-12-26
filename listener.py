@@ -1,13 +1,16 @@
 import keyboard
-import threading
 
+# Example: Check if a specific key is pressed
+if keyboard.is_pressed('esc'):
+    print("Esc key is pressed")
 
-# Access and print all available modifier keys
-modifiers = keyboard.all_modifiers()
-print("Available modifiers:")
-print(modifiers)
-
-# Access and print all available hotkeys
-hotkeys = keyboard.all_hotkeys()
-print("Available hotkeys:")
-print(hotkeys)
+# Example: Print out key events as they happen
+print("Listening for key events. Press 'Esc' to exit.")
+while True:
+    event = keyboard.read_event()
+    if event.event_type == keyboard.KEY_DOWN:
+        print(f"Key pressed: {event.name}")
+    elif event.event_type == keyboard.KEY_UP:
+        print(f"Key released: {event.name}")
+    if event.name == 'esc':
+        break
