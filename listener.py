@@ -1,16 +1,13 @@
+# Code to find the key pressed and the keycode for the custom keyboard button.
 import keyboard
 
-# Example: Check if a specific key is pressed
-if keyboard.is_pressed('esc'):
-    print("Esc key is pressed")
 
-# Example: Print out key events as they happen
-print("Listening for key events. Press 'Esc' to exit.")
+# Print the name of the key when pressed
+print("Press any key to see its name or keycode. Press 'esc' to exit.")
+
 while True:
-    event = keyboard.read_event()
+    event = keyboard.read_event()  # Capture keyboard events
     if event.event_type == keyboard.KEY_DOWN:
-        print(f"Key pressed: {event.name}")
-    elif event.event_type == keyboard.KEY_UP:
-        print(f"Key released: {event.name}")
-    if event.name == 'esc':
+        print(f"Key pressed: {event.name} (Key code: {event.scan_code})")
+    if event.name == 'esc':  # Exit on Escape key press
         break

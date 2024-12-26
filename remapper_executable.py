@@ -1,51 +1,32 @@
 import keyboard
-import threading
-
-# def log_keyboard_events():
-#     """
-#     Function to log all keyboard events.
-#     Captures key press and release events and prints them to the console.
-#     """
-#     print("Keyboard event logging is active.")
-#     print("Press 'Esc' to stop logging and exit the program.")
-
-#     # Listen for all keyboard events
-#     for event in keyboard.record(until='esc'):
-#         if event.event_type == 'down':
-#             print(f"Key Pressed: {event.name}")
-#         elif event.event_type == 'up':
-#             print(f"Key Released: {event.name}")
+import time
 
 
-def main():
-    """
-    Function to remap shortcuts to specific keys.
-    """
-    def remapper():
-        keyboard.press_and_release('None')
+# Define the custom keycode for the NitroSense button (replace with your keycode if you want to change any other key)
+CUSTOM_KEYCODE = 117  # Custom keycode for the Acer nitro sense button.
 
-    # Add hotkeys for remapping
-    keyboard.add_hotkey('win+ctrl+right', remapper)  # Replace Ctrl+Alt+P with Home
-    keyboard.add_hotkey('win+ctrl+left', remapper)
+# Define the keyboard shortcut to simulate (e.g., Ctrl+Alt+T for opening the terminal)
+KEYBOARD_SHORTCUT = {'initial': ['win', 'ctrl', 'right'], 'next': ['win', 'ctrl', 'left']}
 
-    print("Shortcut remapping is active. Press Nitro for desktop change.")
-    print("Press Esc to exit the program.")
+# Function to simulate a keyboard shortcut
+def simulate_shortcut(shortcut):
+    for key in shortcut:
+        keyboard.press(key)  # Press the key in the shortcut
+    for key in shortcut:
+        keyboard.release(key)  # Release the key in the shortcut
 
-    # Keep the remapping active until 'Esc' is pressed
-    keyboard.wait('esc')
+# Listen for the custom key press and simulate a shortcut when pressed
+print("Listening for custom key press (keycode: {})...".format(CUSTOM_KEYCODE))
+while True:
+    event = keyboard.read_event()  # Capture the key event
 
-
-if __name__ == "__main__":
-    # Run the main function and keyboard logger in parallel threads
-    remapping_thread = threading.Thread(target=main, daemon=True)
-    # logging_thread = threading.Thread(target=log_keyboard_events, daemon=True)
-
-    remapping_thread.start()
-    # logging_thread.start()
-
-    # Keep the main script running
-    try:
-        remapping_thread.join()
-        # logging_thread.join()
-    except KeyboardInterrupt:
-        print("\nExiting...")
+    # Check if the custom key is pressed based on its keycode
+    if event.event_type == keyboard.KEY_DOWN and event.scan_code == CUSTOM_KEYCODE:
+        print("Custom key pressed! Simulating shortcut...")
+        simulate_shortcut(KEYBOARD_SHORTCUT)  # Simulate the keyboard shortcut
+        time.sleep(0.5)  # Sleep to prevent multiple presses in quick succession
+    
+    # Optionally, exit the loop by pressing the 'esc' key
+    if event.name == 'esc':
+        print("Exiting the script.")
+        break

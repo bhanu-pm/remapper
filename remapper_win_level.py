@@ -28,6 +28,7 @@ def get_key_state(key_code):
     Check if a particular key is pressed using GetAsyncKeyState.
     """
     # Get the state of the specified key
+    # print(f"keycode is {user32.GetAsyncKeyState(key_code)} and keypressed is {KEY_PRESSED}")
     return user32.GetAsyncKeyState(key_code) & KEY_PRESSED
 
 
@@ -66,6 +67,6 @@ def remap_keys():
         # Sleep to reduce CPU usage while waiting for key press
         time.sleep(0.01)  # Adjust the delay as needed
 
-        
+
 if __name__ == "__main__":
     remap_keys()
