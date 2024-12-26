@@ -7,17 +7,18 @@ import win32api
 import win32con
 import win32process
 
-mutex_name = "remapper"  # Use a unique name for your mutex
+
+mutex_name = "nitro_remapper"  # Use a unique name for your mutex
 
 # Try to create a mutex
 mutex = win32event.CreateMutex(None, 1, mutex_name)
 
 # Check if the mutex is already taken
 if win32api.GetLastError() == win32con.ERROR_ALREADY_EXISTS:
-    print("Another instance of the application is already running.")
+    # print("Another instance of the application is already running.")
     sys.exit(0)  # Exit if mutex exists, i.e., app already running
 
-print("Application is running...")
+# print("Application is running...")
 
 
 ############################################################################## APP LOGIC HERE
