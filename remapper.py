@@ -1,73 +1,62 @@
-# Working prototype that switches between two desktops in windows
 import keyboard
 import time
 import sys
 import win32event
 import win32api
-import win32con
-import win32process
 
-
+# Mutex logic to ensure a single instance of the application
 mutex_name = "nitro_remapper"  # Use a unique name for your mutex
+mutex = win32event.CreateMutex(None, False, mutex_name)
 
-# Try to create a mutex
-mutex = win32event.CreateMutex(None, 1, mutex_name)
-
-# Check if the mutex is already taken
-if win32api.GetLastError() == win32con.ERROR_ALREADY_EXISTS:
-    # print("Another instance of the application is already running.")
-    sys.exit(0)  # Exit if mutex exists, i.e., app already running
-
-# print("Application is running...")
+# Check if the mutex already exists
+if win32api.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
+    sys.exit(0)  # Exit if another instance is running
 
 
-############################################################################## APP LOGIC HERE
-
-# Define the custom keycode for the NitroSense button (replace with your keycode if you want to change any other key)
-CUSTOM_KEYCODE = 117  # Custom keycode for the Acer nitro sense button.
-
-# Define the keyboard shortcut to simulate (e.g., Ctrl+Alt+T for opening the terminal)
+########################################################     App logic
+CUSTOM_KEYCODE = 117  # Custom keycode for the Acer NitroSense button
 KEYBOARD_SHORTCUT = {1: ['win', 'ctrl', 'right'], 2: ['win', 'ctrl', 'left']}
 
 # Function to simulate a keyboard shortcut
 def simulate_shortcut(shortcut):
     for key in shortcut:
-        keyboard.press(key)  # Press the key in the shortcut
+        keyboard.press(key)
     for key in shortcut:
-        keyboard.release(key)  # Release the key in the shortcut
+        keyboard.release(key)
 
-# Listen for the custom key press and simulate a shortcut when pressed
-# print("Listening for custom key press (keycode: {})...".format(CUSTOM_KEYCODE))
-
-prev = 0
-while True:
-    event = keyboard.read_event()  # Capture the key event
-
-    # Check if the custom key is pressed based on its keycode
+# Main function to handle remapping
+def nitro_remapper_fn(prev):
+    event = keyboard.read_event()
     if event.event_type == keyboard.KEY_DOWN and event.scan_code == CUSTOM_KEYCODE:
-        # print("Custom key pressed! Simulating shortcut...")
-        # print(f"prev = {prev}")
         if prev == 1:
-            simulate_shortcut(KEYBOARD_SHORTCUT[2])  # Simulate the keyboard shortcut 2
-            time.sleep(0.5)  # Sleep to prevent multiple presses in quick succession
-            prev = 2
+            simulate_shortcut(KEYBOARD_SHORTCUT[2])
+            time.sleep(0.5)
+            return 2
         elif prev == 2:
-            simulate_shortcut(KEYBOARD_SHORTCUT[1])  # Simulate the keyboard shortcut 1
-            time.sleep(0.5)  # Sleep to prevent multiple presses in quick succession
-            prev = 1
+            simulate_shortcut(KEYBOARD_SHORTCUT[1])
+            time.sleep(0.5)
+            return 1
         elif prev == 0:
-            simulate_shortcut(KEYBOARD_SHORTCUT[1])  # Simulate the keyboard shortcut 1
-            time.sleep(0.5)  # Sleep to prevent multiple presses in quick succession
-            prev = 1
-    
-    # Optionally, exit the loop by pressing the 'esc' key
-    # if event.name == 'esc':
-        # print("Exiting the script.")
-        # break
+            simulate_shortcut(KEYBOARD_SHORTCUT[1])
+            time.sleep(0.5)
+            return 1
+    return prev  # Return the unchanged state if no relevant event occurred
 
-# Keep the application running so that the mutex doesn't get released
+# Keep the application running so the mutex isn't released
 try:
+    prev = 0  # Initial state
     while True:
-        pass
+        try:
+            prev = nitro_remapper_fn(prev)  # Pass the state and update it
+        except Exception as e:
+            # print(f"Error in remapper function: {e}")  # Log errors for debugging
+            pass
 except KeyboardInterrupt:
+    # print("\nApplication stopped by user.")
+    pass
+except Exception as e:
+    # print(f"Unexpected error: {e}")
+    pass
+finally:
+    # print("Exiting application.")
     pass
